@@ -1,0 +1,19 @@
+{
+  "name": "goldmine",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@flydotio/dockerfile": "latest",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "bun --watch run index.ts"
+  },
+  "dependencies": {
+    "openai": "^4.24.7",
+    "tiktoken": "^1.0.11"
+  }
+}
