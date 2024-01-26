@@ -11,7 +11,8 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "bun --watch run index.ts"
+    "dev": "bun --watch run index.ts",
+    "build": "bun build --entrypoints ./index.ts --outdir ./out --target node"
   },
   "type": "module",
   "dependencies": {

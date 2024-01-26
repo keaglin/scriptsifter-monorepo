@@ -4,6 +4,7 @@
  * @param options. Optional. Future implementation for adding options for each selection.
  * @returns CSV string.
  */
+// @ts-ignore
 export function convertSelectionsToMarkersCSV(selections, options?) {
   console.log('selections[0] from convertSelectionsToMarkersCSV', selections[0])
   const csvRows = []
@@ -11,6 +12,7 @@ export function convertSelectionsToMarkersCSV(selections, options?) {
   // Add header row
   csvRows.push(['Marker Name', 'Color', 'Start Time', 'Duration', 'Description'])
 
+  // @ts-ignore
   const csvContent = csvRows.concat(selections.map(({ start, end, content }) => {
     // in order for these to work well, I think we'd need individual options for each selection
     // maybe refactor later for this added flexibility
@@ -26,6 +28,7 @@ export function convertSelectionsToMarkersCSV(selections, options?) {
   return csvContent.map(row => row.join(',')).join('\r\n')
 }
 
+// @ts-ignore
 function convertToResolveTime(start, end, fps: number = 30): { startTime: string, duration: string } {
   // get fragment whose start and transcriptId match the segment?
   // console.log('segment', segment)
@@ -50,7 +53,7 @@ function convertToResolveTime(start, end, fps: number = 30): { startTime: string
  * @param csvContent CSV content to download.
  * @param fileName Name of the file to download.
  * @returns void.
- */
+*/
 export function downloadCSV(csvContent: string, fileName: string) {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
   const link = document.createElement('a')
@@ -63,6 +66,7 @@ export function downloadCSV(csvContent: string, fileName: string) {
   document.body.removeChild(link)
 }
 
+// @ts-ignore
 function escapeCsvText(text) {
   // Check if the text contains commas, double quotes, or newlines
   if (/[",\n]/.test(text)) {

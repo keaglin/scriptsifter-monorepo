@@ -10,7 +10,8 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "bun --watch run index.ts"
+    "dev": "bun --watch run index.ts",
+    "build": "bun build --entrypoints ./index.ts --outdir ./out --target node"
   },
   "dependencies": {
     "openai": "^4.24.7",

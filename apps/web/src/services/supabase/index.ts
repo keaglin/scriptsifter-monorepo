@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs"
+
 import { SupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { createClient } from '@supabase/supabase-js'
 
@@ -429,16 +429,16 @@ export async function getSignedFileUrl(supabase: SupabaseClient, filepath: strin
 }
 
 
-export async function getSupabaseClient() {
-	const { userId, getToken } = auth()
-	if (!userId) throw new Error('No user ID')
+// export async function getSupabaseClient() {
+// 	const { userId, getToken } = auth()
+// 	if (!userId) throw new Error('No user ID')
 
-	const accessToken = await getToken({ template: 'supabase' })
+// 	const accessToken = await getToken({ template: 'supabase' })
 
-	return createClient<Database>(
-		// @ts-ignore
-		process.env.SUPABASE_URL,
-		process.env.SUPABASE_ANON_KEY,
-		{ global: { headers: { Authorization: `Bearer ${accessToken}` } } }
-	)
-}
+// 	return createClient<Database>(
+// 		// @ts-ignore
+// 		process.env.SUPABASE_URL,
+// 		process.env.SUPABASE_ANON_KEY,
+// 		{ global: { headers: { Authorization: `Bearer ${accessToken}` } } }
+// 	)
+// }

@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
   console.log('File uploaded successfully:', storageData.path)
 
   // save a new transcript to the database and put the bucket path in a column
-  // not working; figure it out!
+  // TODO: fix types
+  // @ts-ignore
   const { data: createData, error: createError } = await supabase.from('transcripts').insert({ user_id: userId, filepath: storageData?.path }).select('id')
   if (createError) {
     console.log('Error creating transcript:', createError.message)

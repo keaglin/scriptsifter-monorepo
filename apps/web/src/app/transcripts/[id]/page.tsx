@@ -15,7 +15,9 @@ export default function Page({ params }: { params: { id: string } }) {
   useEffect(() => {
     (async () => {
       const selections = await getSelections(supabase, id)
+      // @ts-ignore
       setSelections(selections)
+      // @ts-ignore
       setSelectedClips(new Array(selections.length).fill(false));
     })()
   }, [supabase, id])
