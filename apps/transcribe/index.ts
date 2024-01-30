@@ -1,6 +1,6 @@
 import { Kafka } from 'kafkajs';
 import jwt from 'jsonwebtoken';
-import createSupabaseClient from './supabase';
+import createSupabaseClient from './services/supabase';
 import { join } from 'node:path';
 import { extractAudioFromVideo, chunkAudio, transcribeChunks } from './helpers';
 import invariant from 'tiny-invariant';
