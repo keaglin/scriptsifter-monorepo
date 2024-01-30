@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for scriptsifter-web-spring-dew-4655 on 2024-01-25T12:39:32-05:00
+# fly.toml app configuration file generated for scriptsifter-web-spring-dew-4655-winter-voice-1031 on 2024-01-26T01:11:58-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'scriptsifter-web-spring-dew-4655'
+app = 'scriptsifter-web'
 primary_region = 'iad'
 
 [build]
