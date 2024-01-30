@@ -1,9 +1,36 @@
-export default function Auth() {
+import { createClient } from "@/services/supabase/server";
+import { headers, cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+export default function Signup() {
+	const signUp = async (formData: FormData) => {
+		"use server";
+
+		const origin = headers().get("origin");
+		const email = formData.get("email") as string;
+		const password = formData.get("password") as string;
+		const cookieStore = cookies();
+		const supabase = createClient(cookieStore);
+
+		const { error } = await supabase.auth.signUp({
+			email,
+			password,
+			options: {
+				emailRedirectTo: `${origin}/auth/callback`,
+			},
+		});
+
+		if (error) {
+			return redirect("/auth/signin?message=Could not authenticate user");
+		}
+
+		return redirect("/auth/signin?message=Check email to continue sign in process");
+	};
 	return (
 		<div className="card-body">
 			<h1 className="text-center text-4xl mb-6">Sign Up</h1>
 
-			<form method="POST" action="/auth/signup">
+			<form method="POST" action={signUp}>
 				<div className="form-control">
 					<input
 						autoComplete="username"
