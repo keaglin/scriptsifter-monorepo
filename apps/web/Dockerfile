@@ -1,4 +1,5 @@
 # syntax = docker/dockerfile:1
+FROM node:${NODE_VERSION}-slim as base
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.10.0 \
@@ -7,19 +8,13 @@ ARG NODE_VERSION=20.10.0 \
     SUPABASE_URL \
     SUPABASE_ANON_KEY
 
-FROM node:${NODE_VERSION}-slim as base
-
 LABEL fly_launch_runtime="Next.js"
 
 # Next.js app lives here
 WORKDIR /app
 
 # Set production environment
-ENV NODE_ENV="production" \
-    NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL} \
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY} \
-    SUPABASE_URL=${SUPABASE_URL} \
-    SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+ENV NODE_ENV="production"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
