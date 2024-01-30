@@ -11,7 +11,7 @@ RUN curl https://bun.sh/install | bash
 WORKDIR /app
 
 # Copy your TypeScript file and other necessary files
-COPY ./init/kafkaInit.ts .
+COPY ./kafkaInit.ts .
 
 # Run your TypeScript file with Bun as the container starts
-CMD ["bun", "./init/kafkaInit.ts"]
+CMD ["bun", "./kafkaInit.ts"]
