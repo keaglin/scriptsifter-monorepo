@@ -1,6 +1,9 @@
 # Start from a base image that has Node.js (Bun might not have an official image yet)
 FROM node:20-bookworm-slim
 
+# Install curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Install Bun
 RUN curl https://bun.sh/install | bash
 
