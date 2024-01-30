@@ -1,8 +1,13 @@
 import { createClient } from "@/services/supabase/server";
 import { headers, cookies } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default function Signup() {
+export default function Signup({
+	searchParams,
+}: {
+	searchParams: { message: string };
+}) {
 	const signUp = async (formData: FormData) => {
 		"use server";
 
@@ -68,10 +73,15 @@ export default function Signup() {
 				</div>
 
 				<div className="text-sm text-secondary text-center">
-					<a className="link no-underline" href="?signin">
+					<Link className="link no-underline" href="/auth/signin">
 						Already have an account? Sign-In
-					</a>
+					</Link>
 				</div>
+				{searchParams?.message && (
+					<p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+						{searchParams.message}
+					</p>
+				)}
 			</form>
 		</div>
 	);
