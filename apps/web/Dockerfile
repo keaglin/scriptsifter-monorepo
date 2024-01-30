@@ -15,7 +15,9 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production" \
     NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL} \
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY} \
+    SUPABASE_URL=${SUPABASE_URL} \
+    SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
