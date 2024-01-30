@@ -14,6 +14,7 @@
     "build": "bun build --entrypoints ./index.ts --outdir ./out --target node"
   },
   "dependencies": {
+    "kafkajs": "^2.2.4",
     "openai": "^4.24.7",
     "tiktoken": "^1.0.11"
   }
