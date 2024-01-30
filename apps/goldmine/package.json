@@ -16,6 +16,7 @@
   "dependencies": {
     "kafkajs": "^2.2.4",
     "openai": "^4.24.7",
+    "@supabase/supabase-js": "^2.39.3",
     "tiktoken": "^1.0.11"
   }
 }
