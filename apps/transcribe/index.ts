@@ -7,7 +7,7 @@ import invariant from 'tiny-invariant';
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-transcriber',
-  brokers: ['localhost:9092']
+  brokers: ['localhost:9092', 'kafka:9092'],
 });
 
 const consumer = kafka.consumer({ groupId: 'transcribers' });

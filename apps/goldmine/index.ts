@@ -4,7 +4,7 @@ import createSupabaseClient from './services/supabase';
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-goldmine',
-  brokers: ['localhost:9092']
+  brokers: ['localhost:9092', 'kafka:9092'],
 });
 
 const consumer = kafka.consumer({ groupId: 'miners' });
