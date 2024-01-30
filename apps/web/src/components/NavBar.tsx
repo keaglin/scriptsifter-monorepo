@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AuthButton from './AuthButton';
 
 export default function NavBar() {
 
@@ -12,6 +13,7 @@ export default function NavBar() {
       <Link href='/'>Home</Link>
       <Link href='/dashboard'>Dashboard</Link>
       <Link href='/upload'>Upload</Link>
+      <AuthButton />
     </header>
   )
 }
