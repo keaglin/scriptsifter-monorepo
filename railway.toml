@@ -1,0 +1,26 @@
+# railway.toml
+
+[service.zookeeper]
+image = "wurstmeister/zookeeper"
+ports = [2181]
+
+[service.kafka]
+image = "wurstmeister/kafka"
+ports = [9092]
+environment = { KAFKA_ZOOKEEPER_CONNECT = "zookeeper:2181", KAFKA_ADVERTISED_LISTENERS = "PLAINTEXT://kafka:9092" }
+
+[service."kafka-init"]
+build = { context = "./apps/kafka/", dockerfile = "Dockerfile" }
+command = ["bun", "./kafkaInit.ts"]
+
+[service.web]
+build = { context = "./apps/web/", dockerfile = "Dockerfile" }
+ports = [3000]
+
+[service.transcribe]
+build = { context = "./apps/transcribe/", dockerfile = "Dockerfile" }
+ports = [8000]
+
+[service.goldmine]
+build = { context = "./apps/goldmine/", dockerfile = "Dockerfile" }
+ports = [8001]
