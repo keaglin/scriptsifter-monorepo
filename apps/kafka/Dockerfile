@@ -11,4 +11,4 @@ WORKDIR /app
 COPY ./init/kafkaInit.ts .
 
 # Run your TypeScript file with Bun as the container starts
-CMD ["bun", "run", "./init/kafkaInit.ts"]
+CMD ["bun", "./init/kafkaInit.ts"]
