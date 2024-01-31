@@ -21,7 +21,10 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/'
   const redirectUrlFromRequest = request.nextUrl.clone()
   // @ts-ignore
-  const redirectTo = process.env.NODE_ENV === 'production' ? new URL(process.env.RAILWAY_PUBLIC_DOMAIN) : redirectUrlFromRequest.clone()
+  const redirectTo = process.env.NODE_ENV === 'production' ?
+    new URL(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`) :
+    redirectUrlFromRequest.clone()
+
   redirectTo.pathname = next
 
   // console.log('railway public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
