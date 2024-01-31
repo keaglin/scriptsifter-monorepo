@@ -2,6 +2,11 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/services/supabase/actions'
 
+/**
+ * Runs when the user clicks the confirm link in the welcome email.
+ * @param request
+ * @returns
+ */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   console.log('public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
@@ -14,7 +19,7 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/'
 
   const host = process.env.NODE_ENV === 'production' ?
-    process.env.RAILWAY_PUBLIC_DOMAIN :
+    `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` :
     origin
 
   console.log('host', host)

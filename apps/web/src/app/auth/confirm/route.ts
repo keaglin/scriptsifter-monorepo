@@ -4,6 +4,13 @@ import { type EmailOtpType } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
+/**
+ * This route is called when the user clicks the magic link to sign in.
+ * Signs the user in and redirects them to the home page. Hopefully.
+ * WORKING 2024-01-31 0518
+ * @param request
+ * @returns NextResponse
+ */
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
@@ -12,6 +19,14 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/'
   const redirectTo = request.nextUrl.clone()
   redirectTo.pathname = next
+  console.log('redirectTo', redirectTo)
+  const port = process.env.RAILWAY_TCP_PROXY_PORT ?? process.env.PORT ?? '3000'
+
+  const redirectUrl = process.env.NODE_ENV === 'production' ?
+    process.env.RAILWAY_PUBLIC_DOMAIN :
+    `http://localhost:${port}`
+
+  console.log('redirectUrl', redirectUrl)
 
   if (token_hash && type) {
     const cookieStore = cookies()
@@ -19,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.verifyOtp({
       type,
-      token_hash,
+      token_hash
     })
 
     if (!error) {

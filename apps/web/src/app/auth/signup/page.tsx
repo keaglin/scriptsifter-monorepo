@@ -12,6 +12,11 @@ export default function Signup({
 		"use server";
 
 		const origin = headers().get("origin");
+
+		const redirectUrl = process.env.NODE_ENV === 'production' ?
+			process.env.RAILWAY_PUBLIC_DOMAIN :
+			origin ?? ''
+
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 		const cookieStore = cookies();
@@ -21,7 +26,7 @@ export default function Signup({
 			email,
 			password,
 			options: {
-				emailRedirectTo: `${origin}/auth/callback`,
+				emailRedirectTo: redirectUrl,
 			},
 		});
 
