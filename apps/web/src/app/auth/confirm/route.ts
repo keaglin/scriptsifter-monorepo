@@ -12,21 +12,21 @@ import { NextRequest, NextResponse } from 'next/server'
  * @returns NextResponse
  */
 export async function GET(request: NextRequest) {
+  console.log('/auth/confirm route start')
   const url = new URL(request.url);
+  console.log('url', url)
   const searchParams = new URLSearchParams(url.search);
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') ?? '/'
   const redirectTo = request.nextUrl.clone()
-  redirectTo.pathname = next
+  // @ts-ignore
+  redirectTo.pathname = process.env.NODE_ENV === 'production' ?
+    process.env.RAILWAY_PUBLIC_DOMAIN : ''
+
+  console.log('railway public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
   console.log('redirectTo', redirectTo)
-  const port = process.env.RAILWAY_TCP_PROXY_PORT ?? process.env.PORT ?? '3000'
 
-  const redirectUrl = process.env.NODE_ENV === 'production' ?
-    process.env.RAILWAY_PUBLIC_DOMAIN :
-    `http://localhost:${port}`
-
-  console.log('redirectUrl from /auth/confirm', redirectUrl)
 
   if (token_hash && type) {
     const cookieStore = cookies()
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!error) {
-      return NextResponse.redirect(`https://${redirectTo}`)
+      return NextResponse.redirect(redirectTo)
     }
 
     console.error('There was a problem authenticating this user.', error)
@@ -46,5 +46,6 @@ export async function GET(request: NextRequest) {
 
   // return the user to an error page with some instructions
   redirectTo.pathname = '/auth/auth-code-error'
+  console.log('/auth/confirm route end')
   return NextResponse.redirect(redirectTo)
 }
