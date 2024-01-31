@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     process.env.RAILWAY_PUBLIC_DOMAIN :
     `http://localhost:${port}`
 
-  console.log('redirectUrl', redirectUrl)
+  console.log('redirectUrl from /auth/confirm', redirectUrl)
 
   if (token_hash && type) {
     const cookieStore = cookies()
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!error) {
-      return NextResponse.redirect(redirectTo)
+      return NextResponse.redirect(`https://${redirectTo}`)
     }
 
     console.error('There was a problem authenticating this user.', error)
