@@ -14,17 +14,17 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   console.log('/auth/confirm route start')
   const url = new URL(request.url);
-  console.log('url', url)
+  console.log('request.url', request.url)
   const searchParams = new URLSearchParams(url.search);
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') ?? '/'
-  const redirectTo = request.nextUrl.clone()
+  const redirectUrlFromRequest = request.nextUrl.clone()
   // @ts-ignore
-  redirectTo.pathname = process.env.NODE_ENV === 'production' ?
-    process.env.RAILWAY_PUBLIC_DOMAIN : ''
+  const redirectTo = process.env.NODE_ENV === 'production' ? new URL(process.env.RAILWAY_PUBLIC_DOMAIN) : redirectUrlFromRequest.clone()
+  redirectTo.pathname = next
 
-  console.log('railway public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
+  // console.log('railway public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
   console.log('redirectTo', redirectTo)
 
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  redirectTo.pathname = '/auth/auth-code-error'
+  // redirectTo.pathname = '/auth/auth-code-error'
   console.log('/auth/confirm route end')
-  return NextResponse.redirect(redirectTo)
+  return NextResponse.redirect('/auth/auth-code-error')
 }
