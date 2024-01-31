@@ -4,6 +4,11 @@ import { createClient } from '@/services/supabase/actions'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
+  console.log('public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
+  console.log('origin', origin)
+  searchParams.forEach((value, key) => {
+    console.log(`${key}: ${value}`)
+  })
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
