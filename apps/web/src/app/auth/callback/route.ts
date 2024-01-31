@@ -13,15 +13,21 @@ export async function GET(request: Request) {
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
 
+  const host = process.env.NODE_ENV === 'production' ?
+    process.env.RAILWAY_PUBLIC_DOMAIN :
+    origin
+
+  console.log('host', host)
+
   if (code) {
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${host}${next}`)
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${host}/auth/auth-code-error`)
 }
