@@ -5,16 +5,15 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
- * This route is called when the user clicks the magic link to sign in.
+ * This route is called when a user clicks the magic link in their email
+ * to sign in.
  * Signs the user in and redirects them to the home page. Hopefully.
  * WORKING 2024-01-31 0518
  * @param request
  * @returns NextResponse
  */
 export async function GET(request: NextRequest) {
-  console.log('/auth/confirm route start')
   const url = new URL(request.url);
-  console.log('request.url', request.url)
   const searchParams = new URLSearchParams(url.search);
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as EmailOtpType | null
@@ -26,10 +25,6 @@ export async function GET(request: NextRequest) {
     redirectUrlFromRequest.clone()
 
   redirectTo.pathname = next
-
-  // console.log('railway public domain env var', process.env.RAILWAY_PUBLIC_DOMAIN)
-  console.log('redirectTo', redirectTo)
-
 
   if (token_hash && type) {
     const cookieStore = cookies()
@@ -48,7 +43,6 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  // redirectTo.pathname = '/auth/auth-code-error'
-  console.log('/auth/confirm route end')
-  return NextResponse.redirect('/auth/auth-code-error')
+  redirectTo.pathname = '/auth/auth-code-error'
+  return NextResponse.redirect(redirectTo)
 }
