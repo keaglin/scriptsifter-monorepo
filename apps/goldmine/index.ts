@@ -2,11 +2,12 @@ import { Kafka } from 'kafkajs';
 import { splitTranscriptIntoBatches, getGoodBitsFromDaVinci } from './helpers';
 import createSupabaseClient from './services/supabase';
 
-console.log('hi from goldmine')
+const host = process.env.NODE_ENV === 'production' ?
+  'kafka' : 'localhost'
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-goldmine',
-  brokers: ['localhost:9092', 'kafka:9092'],
+  brokers: [`${host}:9092`],
 });
 
 const consumer = kafka.consumer({ groupId: 'miners' });

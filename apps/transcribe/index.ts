@@ -5,11 +5,12 @@ import { join } from 'node:path';
 import { extractAudioFromVideo, chunkAudio, transcribeChunks } from './helpers';
 import invariant from 'tiny-invariant';
 
-console.log('hi from transcribe')
+const host = process.env.NODE_ENV === 'production' ?
+  'kafka' : 'localhost'
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-transcriber',
-  brokers: ['localhost:9092', 'kafka:9092'],
+  brokers: [`${host}:9092`],
 });
 
 const consumer = kafka.consumer({ groupId: 'transcribers' });
