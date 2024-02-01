@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { extractAudioFromVideo, chunkAudio, transcribeChunks } from './helpers';
 import invariant from 'tiny-invariant';
 
+console.log('hi from transcribe')
+
 const kafka = new Kafka({
   clientId: 'scriptsifter-transcriber',
   brokers: ['localhost:9092', 'kafka:9092'],

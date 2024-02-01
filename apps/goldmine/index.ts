@@ -2,6 +2,8 @@ import { Kafka } from 'kafkajs';
 import { splitTranscriptIntoBatches, getGoodBitsFromDaVinci } from './helpers';
 import createSupabaseClient from './services/supabase';
 
+console.log('hi from goldmine')
+
 const kafka = new Kafka({
   clientId: 'scriptsifter-goldmine',
   brokers: ['localhost:9092', 'kafka:9092'],
