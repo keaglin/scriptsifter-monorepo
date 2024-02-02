@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
   const file: File | null = data.get('file') as unknown as File
   const cookieStore = cookies()
   const supabase = createClient(cookieStore)
-  // TODO: move cookie to .env
   const token = JSON.parse(cookieStore.get('sb-uhpcxcyzuhmshpzfoxgc-auth-token')?.value ?? '{}')?.access_token
 
   // console.log('token', token)

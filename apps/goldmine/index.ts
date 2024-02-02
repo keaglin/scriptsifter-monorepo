@@ -26,7 +26,6 @@ const runConsumer = async () => {
         offset: message.offset,
         // @ts-ignore
         value: messageValue,
-
       });
 
       const { entries, token, transcriptId } = messageValue
