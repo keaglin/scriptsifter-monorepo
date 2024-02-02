@@ -1,10 +1,10 @@
 'use client'
 
-import { upload } from "@/app/upload/actions"
+import { upload, uploadFile } from "@/app/upload/actions"
 
 export default function UploadForm() {
   return (
-    <form action={upload}>
+    <form action={uploadFile}>
       <label htmlFor="file">
         File (audio or video):
         <input
