@@ -48,9 +48,9 @@ const runConsumer = async () => {
         const { data, error } = await supabase.storage.from('transcripts').download(location);
         console.log('data', data)
         if (error) { console.log('error', error); return }
-        // if (data) console.log('data', data);
-        // console.log('File downloaded:', filename);
+        if (data) console.log('data', data);
         const filename = location.split('/')[1]
+        console.log('File downloaded:', filename);
 
         let filepath = `./downloads/${filename}`;
 
@@ -61,14 +61,13 @@ const runConsumer = async () => {
 
         // 1.5 do processing to make whisper-sized chunks of file? do we still need to do this?
         console.log('file name', file)
-        const chunkUploadPath = join('./downloads', `${Date.now()}-${filename}`)
-        // const chunkUploadPath = join('./downloads', `${Date.now()}-${file.name}`)
-        console.log('chunkUploadPath', chunkUploadPath)
+        const filenameWithoutExtension = filename.split('.')[0]
+        const chunkUploadPath = join('./downloads', filenameWithoutExtension)
 
+        console.log('chunkUploadPath', chunkUploadPath)
 
         const isAudio = file.type.startsWith('audio/')
         console.log('isAudio', isAudio)
-
 
 
         if (!isAudio) {

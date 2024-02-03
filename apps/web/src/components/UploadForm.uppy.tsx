@@ -32,7 +32,9 @@ import '@uppy/progress-bar/dist/style.css'
 // })
 export default function UploadForm({ token, userId }: { token: string, userId: string }) {
   const uppyDashboard = new Uppy()
-    .use(Dashboard)
+    .use(Dashboard, {
+      inline: true
+    })
     .use(Webcam, {
       target: Dashboard,
       showVideoSourceDropdown: true,

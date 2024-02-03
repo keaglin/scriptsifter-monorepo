@@ -82,7 +82,7 @@ export const uploadFile = async (formData: FormData) => {
   permanentRedirect(`/transcripts/${transcriptId}`)
 }
 
-export const upload = async (formData: FormData) => {
+export const uploadWithTus = async (formData: FormData) => {
   const cookieStore = cookies()
   const token: string = JSON.parse(cookieStore.get('sb-uhpcxcyzuhmshpzfoxgc-auth-token')?.value ?? '{}')?.access_token ?? ''
   const userId: string = JSON.parse(cookieStore.get('sb-uhpcxcyzuhmshpzfoxgc-auth-token')?.value ?? '{}')?.user?.id ?? ''
@@ -127,7 +127,8 @@ export const upload = async (formData: FormData) => {
         console.log(bytesUploaded, bytesTotal, percentage + '%')
       },
       onSuccess: function () {
-        console.log('Download %s from %s', upload.file.name, upload.url)
+        // const file = upload.file
+        console.log('Download %s from %s', file.name, upload.url)
         resolve()
       },
     })
