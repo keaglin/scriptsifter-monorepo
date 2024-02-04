@@ -31,30 +31,25 @@ import '@uppy/progress-bar/dist/style.css'
 //   ],
 // })
 export default function UploadForm({ token, userId }: { token: string, userId: string }) {
-  const uppyDashboard = new Uppy()
-    .use(Dashboard, {
-      inline: true
-    })
-    .use(Webcam, {
-      target: Dashboard,
-      showVideoSourceDropdown: true,
-      showRecordingLength: true
-    })
-    .use(Audio, {
-      target: Dashboard,
-      showAudioSourceDropdown: true
-    })
-    .use(ScreenCapture, { target: Dashboard })
-    .use(Tus, {
-      endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
-      uploadDataDuringCreation: true,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      chunkSize: 6 * 1024 * 1024,
-      allowedMetaFields: null,
-      removeFingerprintOnSuccess: true
-    })
+  const uppyDashboard = new Uppy().use(Dashboard, {
+    inline: true, height: 470, width: '100%'
+  }).use(Webcam, {
+    target: Dashboard,
+    showVideoSourceDropdown: true,
+    showRecordingLength: true
+  }).use(Audio, {
+    target: Dashboard,
+    showAudioSourceDropdown: true
+  }).use(ScreenCapture, { target: Dashboard }).use(Tus, {
+    endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
+    uploadDataDuringCreation: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    chunkSize: 6 * 1024 * 1024,
+    allowedMetaFields: null,
+    removeFingerprintOnSuccess: true
+  })
 
 
   const folderName = userId
