@@ -37,6 +37,7 @@ export default function UploadForm({ token, userId }: { token: string, userId: s
       endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
       uploadDataDuringCreation: true,
       headers: {
+        // TODO: make sure this thing is fresh before you use it
         Authorization: `Bearer ${token}`,
       },
       chunkSize: 6 * 1024 * 1024,
