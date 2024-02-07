@@ -90,7 +90,7 @@ export default function UploadForm({ token, userId }: { token: string, userId: s
       setFileUploadLocation('')
       filename.current = ''
 
-      await fetch('/api/kafka', {
+      await fetch('/api/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
