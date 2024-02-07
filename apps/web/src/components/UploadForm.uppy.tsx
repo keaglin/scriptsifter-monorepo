@@ -1,12 +1,11 @@
 'use client'
-
+import { useEffect, useRef, useState } from 'react';
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Tus from '@uppy/tus'
 // import RemoteSources from "@uppy/remote-sources";
 import Webcam from "@uppy/webcam";
 import ScreenCapture from "@uppy/screen-capture";
-// import GoldenRetriever from "@uppy/golden-retriever";
 import Audio from "@uppy/audio";
 import { Dashboard as DashboardComponent, DashboardModal, DragDrop, ProgressBar, FileInput } from '@uppy/react'
 
@@ -16,69 +15,126 @@ import '@uppy/drag-drop/dist/style.css'
 import '@uppy/file-input/dist/style.css'
 import '@uppy/progress-bar/dist/style.css'
 
-// .use(Dashboard, {
-//   inline: true,
-//   // height: 470,
-//   width: '100%',
-//   proudlyDisplayPoweredByUppy: true,
-//   showProgressDetails: true,
-//   hideUploadButton: true,
-//   note: 'Upload audio or video',
-//   metaFields: [
-//     { id: 'title', name: 'Title', placeholder: 'Title' },>
-//     { id: 'season', name: 'Season', placeholder: 'Season' },
-//     { id: 'episodeNum', name: 'Episode Number', placeholder: 'Episode Number' },
-//   ],
-// })
 export default function UploadForm({ token, userId }: { token: string, userId: string }) {
-  const uppyDashboard = new Uppy().use(Dashboard, {
+  const [uploadStatus, setUploadStatus] = useState<string>('idle')
+  const [fileUploadLocation, setFileUploadLocation] = useState<string>('')
+  const filename = useRef<string>('')
+  // TODO: Fix ReferenceError: document is not defined; Uppy wants to render before the dom is ready
+  const [uppy] = useState(() => new Uppy().use(Dashboard, {
     inline: true, height: 470, width: '100%'
-  }).use(Webcam, {
-    target: Dashboard,
-    showVideoSourceDropdown: true,
-    showRecordingLength: true
-  }).use(Audio, {
-    target: Dashboard,
-    showAudioSourceDropdown: true
-  }).use(ScreenCapture, { target: Dashboard }).use(Tus, {
-    endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
-    uploadDataDuringCreation: true,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    chunkSize: 6 * 1024 * 1024,
-    allowedMetaFields: null,
-    removeFingerprintOnSuccess: true
   })
+    .use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true,
+      showRecordingLength: true
+    })
+    .use(Audio, {
+      target: Dashboard,
+      showAudioSourceDropdown: true
+    })
+    .use(ScreenCapture, { target: Dashboard })
+    .use(Tus, {
+      endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
+      uploadDataDuringCreation: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      chunkSize: 6 * 1024 * 1024,
+      allowedMetaFields: null,
+      removeFingerprintOnSuccess: true
+    }))
+
+
+  // uppyDashboard.value = new Uppy()
+  //   .use(Dashboard, {
+  //     inline: true, height: 470, width: '100%'
+  //   })
+  //   .use(Webcam, {
+  //     target: Dashboard,
+  //     showVideoSourceDropdown: true,
+  //     showRecordingLength: true
+  //   })
+  //   .use(Audio, {
+  //     target: Dashboard,
+  //     showAudioSourceDropdown: true
+  //   })
+  //   .use(ScreenCapture, { target: Dashboard })
+  //   .use(Tus, {
+  //     endpoint: `https://uhpcxcyzuhmshpzfoxgc.supabase.co/storage/v1/upload/resumable`,
+  //     uploadDataDuringCreation: true,
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     chunkSize: 6 * 1024 * 1024,
+  //     allowedMetaFields: null,
+  //     removeFingerprintOnSuccess: true
+  //   })
 
 
   const folderName = userId
+  // console.log('folderName', folderName)
 
-  uppyDashboard.on('file-added', (file) => {
-    file.name = `${Date.now()}-${file.name}`
+  uppy.on('file-added', (file) => {
+    filename.current = `${Date.now()}-${file.name}`
+    const fileUploadLocation = `${folderName}/${filename.current}`
+    console.log('fileUploadLocation', fileUploadLocation)
+    // console.log('file.name', file.name)
     file.meta = {
       ...file.meta,
       bucketName: 'transcripts',
-      objectName: folderName ? `${folderName}/${file.name}` : file.name,
+      objectName: fileUploadLocation,
       contentType: file.type,
     }
+    setFileUploadLocation(fileUploadLocation)
     // console.log('file.meta', file.meta)
   })
 
 
-  uppyDashboard.on("complete", (result) => {
+  uppy.on("complete", (result) => {
     if (result.failed.length === 0) {
       console.log("Upload successful");
+      console.log("successful files:", result.successful);
+      setUploadStatus('success')
     } else {
       console.warn("Upload failed");
+      console.log("failed files:", result.failed);
+      setUploadStatus('failed')
     }
-    console.log("successful files:", result.successful);
-    console.log("failed files:", result.failed);
-  });
+  })
 
+  // const router = useRouter()
+  useEffect(() => {
+    console.log('useEffect ran ', Date.now())
+    // const supabase = createClient()
+    const processUpload = async () => {
+      const body = JSON.stringify({
+        token,
+        userId,
+        fileUploadLocation,
+      })
+
+      setUploadStatus('idle')
+      setFileUploadLocation('')
+      filename.current = ''
+
+      await fetch('/api/kafka', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body,
+      })
+    }
+
+    if (uploadStatus === 'success') {
+      processUpload()
+    }
+
+
+  }, [uploadStatus, userId, fileUploadLocation, token]);
 
   return (
-    <DashboardComponent uppy={uppyDashboard} plugins={['Webcam', 'Audio', 'ScreenCapture']} />
+    <DashboardComponent uppy={uppy} plugins={['Webcam', 'Audio', 'ScreenCapture']} />
   )
 }
 
