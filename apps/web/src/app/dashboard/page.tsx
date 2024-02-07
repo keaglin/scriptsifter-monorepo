@@ -17,6 +17,8 @@ export default function Dashboard() {
 
     useEffect(() => {
         (async () => {
+            // const user = await supabase.auth.getUser()
+            // console.log('user', user)
             const {
                 transcripts,
                 count,
@@ -27,7 +29,8 @@ export default function Dashboard() {
                 console.error(JSON.stringify(error))
             }
 
-            console.log('Transcripts', await getTranscripts(supabase))
+            // console.log('Transcripts', await getTranscripts(supabase))
+            console.log('Transcripts', transcripts)
             console.log('Count', count)
             setTranscripts(transcripts)
             setPageCount(Math.ceil(count! / 5))
