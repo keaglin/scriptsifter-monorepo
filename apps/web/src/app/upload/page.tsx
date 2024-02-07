@@ -7,11 +7,13 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { permanentRedirect } from 'next/navigation'
 import * as tus from 'tus-js-client'
+import fs from 'fs'
 
 export default function UploadPage() {
   const uploadWithTus = async (formData: FormData) => {
     'use server'
     const cookieStore = cookies()
+
     const token: string = JSON.parse(cookieStore.get('sb-uhpcxcyzuhmshpzfoxgc-auth-token')?.value ?? '{}')?.access_token ?? ''
     const userId: string = JSON.parse(cookieStore.get('sb-uhpcxcyzuhmshpzfoxgc-auth-token')?.value ?? '{}')?.user?.id ?? ''
     // console.log('userId', userId)
@@ -19,15 +21,19 @@ export default function UploadPage() {
     console.log('fileInfo', fileInfo)
     // return
     const file: File | null = fileInfo.file as unknown as File
-    const stream = file.stream()
+    // const stream = file.stream()
     const stream2 = intoStream(await file.arrayBuffer())
-    // const stream3 = fs.createReadStream(file.path)
-    const reader = stream.getReader()
+    // const stream3 = fs.createReadStream(file)
+    // const reader = stream.getReader()
+    let fileUploadStatus = ''
 
 
     const projectId = 'uhpcxcyzuhmshpzfoxgc'
+    const fileUploadLocation = `${userId}/${Date.now()}-${file.name}`
 
-    return new Promise<void>((resolve, reject) => {
+    console.log('fileUploadLocation', fileUploadLocation)
+
+    return new Promise((resolve, reject) => {
       let upload = new tus.Upload(stream2, {
         endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
         retryDelays: [0, 3000, 5000, 10000, 20000],
@@ -42,7 +48,7 @@ export default function UploadPage() {
         // removeFingerprintOnSuccess: true, // Important if you want to allow re-uploading the same file https://github.com/tus/tus-js-client/blob/main/docs/api.md#removefingerprintonsuccess
         metadata: {
           bucketName: 'transcripts',
-          objectName: `${userId}/${Date.now()}-${file.name}`,
+          objectName: fileUploadLocation,
           contentType: file.type,
           cacheControl: '3600',
         },
@@ -55,10 +61,45 @@ export default function UploadPage() {
           var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
           console.log(bytesUploaded, bytesTotal, percentage + '%')
         },
-        onSuccess: function () {
+        onSuccess: async function () {
           console.log('upload', upload)
           console.log('Download %s from %s', file.name, upload.url)
-          resolve()
+
+          console.log('File uploaded successfully:', fileUploadLocation)
+          const supabase = createClient(cookieStore)
+
+
+          // save a new transcript to the database and put the bucket path in a column
+          // TODO: fix types
+          // @ts-ignore
+          const { data: createData, error: createError } = await supabase.from('transcripts').insert({ user_id: userId, filepath: fileUploadLocation }).select('id')
+          if (createError) {
+            console.log('Error creating transcript:', createError.message)
+            return Response.json({ success: false })
+          }
+
+          console.log('Transcript created successfully:', createData)
+
+          const transcriptId = createData[0].id
+
+          const payload = {
+            // TODO:
+            // transactionid, -- uuid or cid for the transaction itself; for traceability/observability
+            location: fileUploadLocation,
+            token,
+            transcriptId
+          }
+
+          try {
+            await producer.connect()
+            await producer.send({ topic: 'file-uploaded', messages: [{ value: JSON.stringify(payload) }] })
+          } catch (err) {
+            console.log('Error publishing to Kafka:', err)
+          }
+
+          resolve(upload)
+          revalidatePath(`/transcripts`)
+          permanentRedirect(`/transcripts/${transcriptId}`)
         },
       })
 
