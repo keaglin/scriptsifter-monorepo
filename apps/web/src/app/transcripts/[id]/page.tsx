@@ -4,6 +4,8 @@ import { createClient } from '@/services/supabase/client'
 import { Transcript, getSelections } from '@/services/transcript'
 import { FormEventHandler, useEffect, useState } from 'react'
 
+// TODO: add suspense here? bc when we redirect, the page is not yet ready
+
 export default function Page({ params }: { params: { id: string } }) {
   const [transcript, setTranscript] = useState({} as unknown as Transcript)
   const [selections, setSelections] = useState([])
