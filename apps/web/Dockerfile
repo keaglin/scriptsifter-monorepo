@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1
-ARG NODE_VERSION=20.10.0
+ARG NODE_VERSION=20.12.2
 FROM node:${NODE_VERSION}-alpine as base
 
 # Adjust NODE_VERSION as desired
