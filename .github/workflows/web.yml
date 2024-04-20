@@ -66,8 +66,8 @@ jobs:
         images: |
           scriptsifter/${{ env.app_component }}
 
-          # generate Docker tags based on the following events/attributes
-          tags: |
+        # generate Docker tags based on the following events/attributes
+        tags: |
           type=ref,event=branch
           type=ref,event=pr
           type=sha,format=long,prefix=${{ env.app_component }}-${{ github.head_ref }},enable=${{ github.event_name == 'pull_request' }}
