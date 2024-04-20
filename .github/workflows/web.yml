@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
     paths:
       - 'apps/web/**'  # Trigger the action only if changes are within the 'apps/web' directory
       - '.github/workflows/web.yml'
