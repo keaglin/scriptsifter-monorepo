@@ -42,6 +42,9 @@ jobs:
       - name: get pwd
         run: pwd
 
+      - name: list files
+        run: ls -la
+
   build:
     runs-on: ubuntu-latest
     steps:
