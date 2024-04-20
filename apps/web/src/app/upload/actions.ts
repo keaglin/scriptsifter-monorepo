@@ -1,3 +1,5 @@
+'use server'
+
 // import { NextRequest, Response } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@/services/supabase/server'
@@ -6,8 +8,8 @@ import { producer } from '@/services/kafka'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-export async function POST(request: Request) {
-  const data = await request.json()
+export async function processUpload(data: { fileUploadLocation: string; token: string }) {
+  // const data = await request.json()
   console.log('data', data)
   const { fileUploadLocation, token: bearerToken } = data
   // const file: File | null = data.get('file') as unknown as File

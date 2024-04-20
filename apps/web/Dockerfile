@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 ARG NODE_VERSION=20.10.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:${NODE_VERSION}-alpine as base
 
 # Adjust NODE_VERSION as desired
 ARG NEXT_PUBLIC_SUPABASE_URL \
@@ -20,8 +20,8 @@ ENV NODE_ENV="production"
 FROM base as build
 
 # Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+RUN apk update && \
+    apk add --no-cache build-base nodejs-current npm python3
 
 # Install node modules
 COPY --link package.json ./
