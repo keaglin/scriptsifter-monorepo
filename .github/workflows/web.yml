@@ -7,7 +7,7 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths:
-      - 'apps/web/**'  # Trigger the action only if changes are within the 'apps/web' directory
+      - '../apps/web/**'  # Trigger the action only if changes are within the 'apps/web' directory
       - '.github/workflows/web.yml'
 
 jobs:
@@ -38,12 +38,6 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
-
-      - name: get pwd
-        run: pwd
-
-      - name: list files
-        run: ls -la
 
   build:
     runs-on: ubuntu-latest
@@ -86,16 +80,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: get pwd
-      run: pwd
-
-    - name: list files
-      run: ls -la
-
     - name: Build and push image
       uses: docker/build-push-action@v5
       with:
-        context: .
         push: ${{ github.event != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
