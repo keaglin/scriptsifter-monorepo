@@ -20,7 +20,7 @@ jobs:
           echo "branch=$(echo ${{ github.head_ref }} | tr / -)" >> $GITHUB_ENV
           echo "app_component=web" >> $GITHUB_ENV
           echo "formatted_date=$(date +%Y-%m-%d)" >> $GITHUB_ENV
-
+          echo "${{ github }}"
           # docker build -t scriptsifter/${{ env.app_component }}:${{ env.branch }}.${{ env.sha_short }} ../apps/${{ env.app_component }}
 
       - name: Tag Docker image
