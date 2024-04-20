@@ -1,12 +1,11 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1.1.4-alpine as base
+FROM oven/bun:1.1.4-debian as base
 # Enable community repository for ffmpeg
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 
 # Update, install dependencies, and create working directory
-RUN apk update && \
-  apk add ffmpeg && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg && \
   mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
@@ -34,7 +33,7 @@ COPY . .
 # [optional] tests & build
 ENV NODE_ENV=production
 RUN bun test
-RUN FLUENTFFMPEG_COV='' bun run build
+# RUN FLUENTFFMPEG_COV='' bun run build
 
 # copy production dependencies and source code into final image
 FROM base AS release

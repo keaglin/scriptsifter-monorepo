@@ -11,6 +11,8 @@ services:
 
   transcribe:
     build: ./apps/transcribe/Dockerfile
+    volumes:
+    - transcribe-data:/data # Storage for downloaded files
     depends_on:
       - kafka
 
@@ -44,3 +46,6 @@ services:
 volumes:
   minio-data:
   postgres-data:
+  transcribe-data:
+    driver_opts:
+      size: 5GB
