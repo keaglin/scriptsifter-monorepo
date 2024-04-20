@@ -39,6 +39,9 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
+      - name: get pwd
+        run: pwd
+
   build:
     runs-on: ubuntu-latest
     steps:
