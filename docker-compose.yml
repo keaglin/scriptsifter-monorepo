@@ -1,6 +1,6 @@
 services:
   web:
-    image: kevonstaycoding/web:latest
+    image: kevonstaycoding/scriptsifter-web:latest
     ports:
       - "80:3000" # Map your frontend's port
     depends_on:
@@ -8,14 +8,14 @@ services:
       - goldmine
 
   transcribe:
-    image: kevonstaycoding/transcribe:latest
+    image: kevonstaycoding/scriptsifter-transcribe:latest
     volumes:
     - transcribe-data:/data # Storage for downloaded files
     depends_on:
       - kafka
 
   goldmine:
-    image: kevonstaycoding/goldmine:latest
+    image: kevonstaycoding/scriptsifter-goldmine:latest
     depends_on:
       - kafka
 
