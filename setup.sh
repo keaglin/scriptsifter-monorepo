@@ -22,4 +22,4 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # Start your application stack
-docker-compose up -d
+docker compose up -d
