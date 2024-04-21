@@ -1,5 +1,3 @@
-version: '3.8' # Or a suitable version for your setup
-
 services:
   web:
     image: kevonstaycoding/web:latest
