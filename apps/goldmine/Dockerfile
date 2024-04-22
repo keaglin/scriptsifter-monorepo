@@ -5,13 +5,11 @@ WORKDIR /app
 
 COPY package.json bun.lockb ./
 
-RUN bun install -g pm2
-
-RUN bun install
+RUN bun install && bun run build
 
 COPY . .
+RUN bun install -g pm2
 
-RUN bun run build
 
 # run the app
 USER bun
