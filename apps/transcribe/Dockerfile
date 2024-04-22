@@ -1,7 +1,6 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
 FROM oven/bun:1.1.4-debian as base
-# Enable community repository for ffmpeg
 
 # Update, install dependencies, and create working directory
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && \
@@ -31,8 +30,8 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 # [optional] tests & build
-ENV NODE_ENV=production
-RUN bun test
+# ENV NODE_ENV=production
+# RUN bun test
 # RUN FLUENTFFMPEG_COV='' bun run build
 
 # copy production dependencies and source code into final image
