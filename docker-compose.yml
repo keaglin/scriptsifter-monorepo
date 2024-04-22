@@ -1,4 +1,16 @@
 services:
+  traefik:
+    image: traefik:v3.0 # Adjust version if needed
+    container_name: traefik # Optional, but helps with management
+    restart: always # Recommended for production
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./traefik.toml:/etc/traefik/traefik.toml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+
   web:
     image: kevonstaycoding/scriptsifter-web:latest
     ports:
@@ -6,6 +18,13 @@ services:
     depends_on:
       - transcribe
       - goldmine
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`app.scriptsifter.com`)"
+      - "traefik.http.routers.web.entrypoints=websecure"  # HTTPS entrypoint
+      - "traefik.http.routers.web.tls=true" # Enforce TLS
+
 
   transcribe:
     image: kevonstaycoding/scriptsifter-transcribe:latest

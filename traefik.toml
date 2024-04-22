@@ -1,0 +1,15 @@
+[entryPoints]
+  [entryPoints.websecure]
+    address = ":443"
+
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+
+[certificatesResolvers]
+  [certificatesResolvers.myresolver]
+    [certificatesResolvers.myresolver.acme]
+      email = "eaglinkc@gmail.com"
+      storage = "acme.json"  # File for storing certificates
+      [certificatesResolvers.myresolver.acme.httpChallenge]
+        entryPoint = "websecure"
