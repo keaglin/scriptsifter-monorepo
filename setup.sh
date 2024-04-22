@@ -13,10 +13,13 @@ if ! command -v op &> /dev/null; then
 fi
 
 # Sign in to 1Password (if not already signed in)
-if ! op account list &> /dev/null; then
-  echo "Enter your 1Password credentials to sign in:"
-  eval $(op signin)
-fi
+# if ! op account list &> /dev/null; then
+#   echo "Enter your 1Password credentials to sign in:"
+#   eval $(op signin)
+# fi
+
+# I never seem to be logged in so for now, just login every time
+eval $(op signin)
 
 # Retrieve the password from 1Password
 export POSTGRES_PASSWORD=$(op item get "Scriptsifter Postgres Docker Password" --fields label=password)
