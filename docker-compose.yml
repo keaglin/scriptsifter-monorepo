@@ -45,5 +45,3 @@ volumes:
   minio-data:
   postgres-data:
   transcribe-data:
-    driver_opts:
-      size: 5GB
