@@ -21,8 +21,16 @@ fi
 # I never seem to be logged in so for now, just login every time
 eval $(op signin)
 
-# Retrieve the password from 1Password
+# Retrieve secrets from 1Password
 export POSTGRES_PASSWORD=$(op item get "Scriptsifter Postgres Docker Password" --fields label=password)
+export SUPABASE_URL=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_URL)
+export SUPABASE_ANON_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_ANON_KEY)
+export SUPABASE_SERVICE_ROLE_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_SERVICE_ROLE_KEY)
+export SUPABASE_JWT_SECRET=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_JWT_SECRET)
+export OPENAI_API_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=OPENAI_API_KEY)
+export NEXT_PUBLIC_SUPABASE_URL=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_SUPABASE_URL)
+export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_SUPABASE_ANON_KEY)
+export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
 # Ensure you have Docker Compose installed
 if ! command -v docker compose &> /dev/null; then
