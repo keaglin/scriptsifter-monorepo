@@ -13,6 +13,8 @@ COPY package.json bun.lockb ./
 
 RUN bun install -g pm2
 
+RUN bun install
+
 COPY . .
 
 RUN bun run build
