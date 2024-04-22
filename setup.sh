@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Build Docker images
-docker build -t scriptsifter/transcribe ./apps/transcribe
-docker build -t scriptsifter/goldmine ./apps/goldmine
-docker build -t scriptsifter/web ./apps/web
+# docker build -t scriptsifter/transcribe ./apps/transcribe
+# docker build -t scriptsifter/goldmine ./apps/goldmine
+# docker build -t scriptsifter/web ./apps/web
 
 
 # Install the 1Password CLI if not already present
@@ -12,11 +12,17 @@ if ! command -v op &> /dev/null; then
   exit 1
 fi
 
+# Sign in to 1Password (if not already signed in)
+if ! op account list &> /dev/null; then
+  echo "Enter your 1Password credentials to sign in:"
+  eval $(op signin)
+fi
+
 # Retrieve the password from 1Password
 export POSTGRES_PASSWORD=$(op item get "Scriptsifter Postgres Docker Password" --fields label=password)
 
 # Ensure you have Docker Compose installed
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker compose &> /dev/null; then
   echo "Docker Compose not found. Please install it."
   exit 1
 fi
