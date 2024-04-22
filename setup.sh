@@ -22,16 +22,16 @@ fi
 eval $(op signin)
 
 # Retrieve secrets from 1Password
-export POSTGRES_PASSWORD=$(op item get "Scriptsifter Postgres Docker Password" --fields label=password)
-export SUPABASE_URL=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_URL)
-export SUPABASE_ANON_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_ANON_KEY)
-export SUPABASE_SERVICE_ROLE_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_SERVICE_ROLE_KEY)
-export SUPABASE_JWT_SECRET=$(op item get "Scriptsifter Postgres Docker Password" --fields label=SUPABASE_JWT_SECRET)
-export OPENAI_API_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=OPENAI_API_KEY)
-export NEXT_PUBLIC_SUPABASE_URL=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_SUPABASE_URL)
-export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_SUPABASE_ANON_KEY)
-export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op item get "Scriptsifter Postgres Docker Password" --fields label=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-
+export POSTGRES_PASSWORD=$(op item get "Scriptsifter Secrets" --fields label=password)
+export SUPABASE_URL=$(op item get "Scriptsifter Secrets" --fields label=SUPABASE_URL)
+export SUPABASE_ANON_KEY=$(op item get "Scriptsifter Secrets" --fields label=SUPABASE_ANON_KEY)
+export SUPABASE_SERVICE_ROLE_KEY=$(op item get "Scriptsifter Secrets" --fields label=SUPABASE_SERVICE_ROLE_KEY)
+export SUPABASE_JWT_SECRET=$(op item get "Scriptsifter Secrets" --fields label=SUPABASE_JWT_SECRET)
+export OPENAI_API_KEY=$(op item get "Scriptsifter Secrets" --fields label=OPENAI_API_KEY)
+export NEXT_PUBLIC_SUPABASE_URL=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_SUPABASE_URL)
+export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_SUPABASE_ANON_KEY)
+export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+export FLUENTFFMPEG_COV=''
 # Ensure you have Docker Compose installed
 if ! command -v docker compose &> /dev/null; then
   echo "Docker Compose not found. Please install it."
