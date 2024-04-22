@@ -1,7 +1,7 @@
 services:
   traefik:
     image: traefik:v3.0 # Adjust version if needed
-    container_name: traefik # Optional, but helps with management
+    container_name: traefik # Optional, but helps with `docker ps`
     restart: always # Recommended for production
     ports:
       - "80:80"
@@ -13,6 +13,8 @@ services:
 
   web:
     image: kevonstaycoding/scriptsifter-web:latest
+    container_name: scriptsifter-web
+    restart: always
     ports:
       - "3000:3000" # Map your frontend's port
     depends_on:
@@ -28,6 +30,8 @@ services:
 
   transcribe:
     image: kevonstaycoding/scriptsifter-transcribe:latest
+    container_name: scriptsifter-transcribe
+    restart: always
     volumes:
     - transcribe-data:/data # Storage for downloaded files
     depends_on:
@@ -35,11 +39,15 @@ services:
 
   goldmine:
     image: kevonstaycoding/scriptsifter-goldmine:latest
+    container_name: scriptsifter-goldmine
+    restart: always
     depends_on:
       - kafka
 
   kafka:
     image: bitnami/kafka:latest
+    container_name: scriptsifter-kafka
+    restart: always
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 # Adjust if needed
     ports:
@@ -47,6 +55,8 @@ services:
 
   minio:
     image: minio/minio:latest
+    container_name: scriptsifter-minio
+    restart: always
     ports:
       - "9000:9000" # MinIO's default port
     volumes:
@@ -55,6 +65,8 @@ services:
 
   postgres:
     image: postgres:latest
+    container_name: scriptsifter-db
+    restart: always
     environment:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
