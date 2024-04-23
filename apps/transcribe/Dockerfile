@@ -1,6 +1,6 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM --platform=amd64 oven/bun:1.1.4-debian as base
+FROM --platform=amd64 oven/bun:1.1.4-alpine as base
 
 WORKDIR /usr/src/app
 
@@ -24,21 +24,19 @@ COPY . .
 
 # [optional] tests & build
 ENV NODE_ENV=production
-RUN bun test
+# RUN bun test
 RUN ls -la
 RUN FLUENTFFMPEG_COV='' bun build --entrypoints index.ts --outdir out/ --target bun
 
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/index.ts .
-COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/out out
+# COPY --from=prerelease /usr/src/app/index.ts .
+# COPY --from=prerelease /usr/src/app/package.json .
 RUN ls -la
 # Update, install dependencies, and create working directory
-RUN <<EOF
-DEBIAN_FRONTEND=noninteractive apt-get update -y
-DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
-EOF
+RUN apk add --no-cache ffmpeg
 
 RUN ls -la
 # bun install -g pm2
