@@ -1,37 +1,50 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1.1.4-debian as base
+FROM --platform=amd64 oven/bun:1.1.4-debian as base
 
-# Update, install dependencies, and create working directory
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg && \
-  mkdir -p /app
+WORKDIR /usr/src/app
 
-WORKDIR /app
-COPY package.json bun.lockb ./
-RUN bun install
+# install dependencies into temp directory
+# this will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lockb /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-FROM oven/bun:1.1.4-debian as build
-RUN ls -la
-WORKDIR /app
-RUN pwd
+# install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lockb /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
+
+# copy node_modules from temp directory
+# then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-RUN ls -la
-COPY --from=base /app/node_modules /app/node_modules
-RUN ls -la
-RUN pwd
-RUN bun build --entrypoints ./index.ts --outdir /app/out --target bun
 
-FROM oven/bun:1.1.4-debian as app
+# [optional] tests & build
+ENV NODE_ENV=production
+RUN bun test
 RUN ls -la
-WORKDIR /app
-RUN ls -la
-COPY --from=build /app/out /app/out
-RUN ls -la
-RUN bun install -g pm2
+RUN FLUENTFFMPEG_COV='' bun build --entrypoints index.ts --outdir out/ --target bun
 
+# copy production dependencies and source code into final image
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/index.ts .
+COPY --from=prerelease /usr/src/app/package.json .
+RUN ls -la
+# Update, install dependencies, and create working directory
+RUN <<EOF
+DEBIAN_FRONTEND=noninteractive apt-get update -y
+DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg
+EOF
+
+RUN ls -la
+# bun install -g pm2
+# pm2 -v
 
 # run the app
 USER bun
 EXPOSE 3000/tcp
-CMD [ "pm2", "start", "/app/out/index.js" ]
+CMD [ "bun", "run", "--watch", "out/index.js" ]
