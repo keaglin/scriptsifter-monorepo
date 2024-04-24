@@ -25,24 +25,16 @@ COPY . .
 # [optional] tests & build
 ENV NODE_ENV=production
 # RUN bun test
-RUN ls -la
+# This env var must be falsy because fluent-ffmpeg breaks the build otherwise
 RUN FLUENTFFMPEG_COV='' bun build --entrypoints index.ts --outdir out/ --target bun
 
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/out out
-# COPY --from=prerelease /usr/src/app/index.ts .
-# COPY --from=prerelease /usr/src/app/package.json .
-RUN ls -la
-# Update, install dependencies, and create working directory
+
 RUN apk add --no-cache ffmpeg
 
-RUN ls -la
-# bun install -g pm2
-# pm2 -v
-
-# run the app
 USER bun
 EXPOSE 3000/tcp
 CMD [ "bun", "run", "--watch", "out/index.js" ]

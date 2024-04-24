@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Build Docker images
-# docker build -t scriptsifter/transcribe ./apps/transcribe
-# docker build -t scriptsifter/goldmine ./apps/goldmine
-# docker build -t scriptsifter/web ./apps/web
-
-
 # Install the 1Password CLI if not already present
 if ! command -v op &> /dev/null; then
   echo "1Password CLI not found. Please install it."
@@ -31,12 +25,17 @@ export OPENAI_API_KEY=$(op item get "Scriptsifter Secrets" --fields label=OPENAI
 export NEXT_PUBLIC_SUPABASE_URL=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_SUPABASE_URL)
 export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_SUPABASE_ANON_KEY)
 export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op item get "Scriptsifter Secrets" --fields label=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-export FLUENTFFMPEG_COV=''
+
 # Ensure you have Docker Compose installed
 if ! command -v docker compose &> /dev/null; then
   echo "Docker Compose not found. Please install it."
   exit 1
 fi
+
+# Build Docker images
+docker build -t kevonstaycoding/scriptsifter-transcribe:latest ./apps/transcribe
+docker build -t kevonstaycoding/scriptsifter-goldmine:latest ./apps/goldmine
+docker build -t kevonstaycoding/scriptsifter-web:latest ./apps/web
 
 # Start your application stack
 docker compose up -d
