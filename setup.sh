@@ -13,7 +13,7 @@ fi
 # fi
 
 # I never seem to be logged in so for now, just login every time
-eval $(op signin)
+# eval $(op signin)
 
 # Retrieve secrets from 1Password
 # In your Docker Compose file or a startup script
