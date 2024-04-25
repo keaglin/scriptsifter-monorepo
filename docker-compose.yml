@@ -19,6 +19,16 @@ services:
     image: kevonstaycoding/scriptsifter-web:latest
     container_name: scriptsifter-web
     restart: always
+    environment:
+      - OPENAI_API_KEY
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - NEXT_PUBLIC_SUPABASE_URL
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+      - CLERK_SECRET_KEY
     ports:
       - "3000:3000" # Map your frontend's port
     depends_on:
@@ -39,6 +49,14 @@ services:
     image: kevonstaycoding/scriptsifter-transcribe:latest
     container_name: scriptsifter-transcribe
     restart: always
+    environment:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - OPENAI_API_KEY
+      - FLUENTFFMPEG_COV
+
     volumes:
       - transcribe-data:/data # Storage for downloaded files
     depends_on:
@@ -52,6 +70,13 @@ services:
     image: kevonstaycoding/scriptsifter-goldmine:latest
     container_name: scriptsifter-goldmine
     restart: always
+    environment:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - OPENAI_API_KEY
+
     depends_on:
       - kafka
     networks:
