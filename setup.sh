@@ -18,15 +18,15 @@ eval $(op signin)
 # Retrieve secrets from 1Password
 # In your Docker Compose file or a startup script
 
-export POSTGRES_PASSWORD=$(op read op://VaultName/Scriptsifter Secrets/password)
-export SUPABASE_URL=$(op read op://VaultName/Scriptsifter Secrets/SUPABASE_URL)
-export SUPABASE_ANON_KEY=$(op read op://VaultName/Scriptsifter Secrets/SUPABASE_ANON_KEY)
-export SUPABASE_SERVICE_ROLE_KEY=$(op read op://VaultName/Scriptsifter Secrets/SUPABASE_SERVICE_ROLE_KEY)
-export SUPABASE_JWT_SECRET=$(op read op://VaultName/Scriptsifter Secrets/SUPABASE_JWT_SECRET)
-export OPENAI_API_KEY=$(op read op://VaultName/Scriptsifter Secrets/OPENAI_API_KEY)
-export NEXT_PUBLIC_SUPABASE_URL=$(op read op://VaultName/Scriptsifter Secrets/NEXT_PUBLIC_SUPABASE_URL)
-export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op read op://VaultName/Scriptsifter Secrets/NEXT_PUBLIC_SUPABASE_ANON_KEY)
-export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op read op://VaultName/Scriptsifter Secrets/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+export POSTGRES_PASSWORD=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/password)
+export SUPABASE_URL=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/SUPABASE_URL)
+export SUPABASE_ANON_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/SUPABASE_ANON_KEY)
+export SUPABASE_SERVICE_ROLE_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/SUPABASE_SERVICE_ROLE_KEY)
+export SUPABASE_JWT_SECRET=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/SUPABASE_JWT_SECRET)
+export OPENAI_API_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/OPENAI_API_KEY)
+export NEXT_PUBLIC_SUPABASE_URL=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_SUPABASE_URL)
+export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_SUPABASE_ANON_KEY)
+export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
 
 # Ensure you have Docker Compose installed
