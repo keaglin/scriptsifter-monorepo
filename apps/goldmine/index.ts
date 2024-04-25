@@ -3,7 +3,7 @@ import { splitTranscriptIntoBatches, getGoodBitsFromDaVinci } from './helpers';
 import createSupabaseClient from './services/supabase';
 
 const host = process.env.NODE_ENV === 'production' ?
-  'kafka' : 'localhost'
+  'scriptsifter-kafka' : 'localhost'
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-goldmine',

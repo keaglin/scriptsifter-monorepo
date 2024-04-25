@@ -6,7 +6,7 @@ import { extractAudioFromVideo, chunkAudio, transcribeChunks } from './helpers';
 import invariant from 'tiny-invariant';
 
 const host = process.env.NODE_ENV === 'production' ?
-  'kafka' : 'localhost'
+  'scriptsifter-kafka' : 'localhost'
 
 const kafka = new Kafka({
   clientId: 'scriptsifter-transcriber',
