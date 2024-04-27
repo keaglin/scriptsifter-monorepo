@@ -3,15 +3,30 @@ services:
     image: traefik:v3.0 # Adjust version if needed
     container_name: traefik # Optional, but helps with `docker ps`
     restart: always # Recommended for production
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=services"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificateresolvers.letsencrypt"
+      - "--certificatesresolvers.myresolver.acme.email=dev@keaglin.com"
+      - "--certificatesresolvers.myresolver.acme.storage=acme.json"
+      # used during the challenge
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - "./traefik.toml:/etc/traefik/traefik.toml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
     networks:
       - services
+    labels:
+      - traefik.http.routers.web.rule=Host(`app.scriptsifter.com`)
+      - traefik.http.routers.web.tls=true
+      - traefik.http.routers.web.tls.certresolver=myresolver
 
   web:
     # for testing new builds locally before pushing to Hub
@@ -34,7 +49,9 @@ services:
     depends_on:
       - transcribe
       - goldmine
-      - traefik
+      - kafka
+      - postgres
+      - minio
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.web.rule=Host(`app.scriptsifter.com`)"
