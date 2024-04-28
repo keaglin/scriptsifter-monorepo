@@ -25,9 +25,10 @@ services:
       - minio
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`app.scriptsifter.com`)"
-      - traefik.http.routers.blog.tls.certresolver=letsencrypt
-      - "traefik.http.routers.web.tls=true" # Enforce TLS
+      - "traefik.http.routers.web.rule=Host(`web.docker.localhost`)"
+      # - traefik.http.routers.web.tls.certresolver=letsencrypt # using the websecure entrypoint already configured with TLS makes this redundant? maybe not
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"
     networks:
       - services
       - inet
@@ -100,7 +101,7 @@ services:
       - services
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.minio-ui.rule=Host(`minio-ui`)"
+      - "traefik.http.routers.minio-ui.rule=Host(`minio-ui.localhost`)"
       - "traefik.http.routers.minio-ui.service=minio-ui"
       - "traefik.http.services.minio-ui.loadbalancer.server.port=9000" # Adjust if MinIO UI port is different
 
