@@ -5,35 +5,45 @@ services:
     restart: always # Recommended for production
     security_opt:
       - no-new-privileges=true
-    read_only: true
+    # read_only: true
     command:
       - "--log.level=DEBUG"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--certificatesresolvers.letsencrypt.acme.email=dev@keaglin.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # - for testing purposes only
+      # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--certificatesresolvers.letsencrypt.acme.email=dev@keaglin.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--entrypoints.websecure.http.tls.domains[0].main=scriptsifter.com"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.scriptsifter.com"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=porkbun"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=60"  # Adjust accordingly if needed
+    environment:
+      - PORKBUN_API_KEY
+      - PORKBUN_SECRET_API_KEY
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - ./letsencrypt/acme.json:/letsencrypt/acme.json:rw
-    networks:
-      - inet
+      - ./letsencrypt:/letsencrypt:rw
+    # network_mode: host # Required to access the host's network
     labels:
       - "traefik.enable=true"
-      - traefik.http.routers.api.rule=Host(`traefik.scriptsifter.com`)
-      - traefik.http.routers.api.service=api@internal
-      - "traefik.http.routers.traefik-secure.tls.domains.main=scriptsifter.com" #if you use the .home.yourdomain.co.uk entry you have to change the [0] into [1]
-      - "traefik.http.routers.traefik-secure.tls.domains.sans=*.scriptsifter.com"
+      - traefik.http.routers.traefik.rule=Host(`traefik.scriptsifter.com`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.service=api@internal
+      # - traefik.http.routers.traefik.middlewares=traefik-auth
+      # - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$apr1$rD4sS9vv$PJ49xLSHNY1tDFlqYpxFw.
+    networks:
+      - inet
 
 networks:
   inet:
