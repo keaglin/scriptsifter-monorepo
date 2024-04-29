@@ -6,35 +6,34 @@ services:
     security_opt:
       - no-new-privileges=true
     # read_only: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt:rw  # Optional, if retaining DNS challenge
+      - ./certs:/certs:ro  # Mount the directory containing the certificates
     command:
-      - "--log.level=DEBUG"
+      - "--log.level=DEBUG"  # Keep this for debugging
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+
+      # DNS Challenge Configuration (Leave as-is if you still want it)
       - "--certificatesresolvers.letsencrypt.acme.email=dev@keaglin.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      # - for testing purposes only
-      # - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+      # File Provider Configuration
+      - "--certificatesResolvers.myresolver.acme.tlsChallenge=false" # Disable TLS challenge
+      - "--providers.file.directory=/certs"  # Directory where certificates are stored
+      - "--providers.file.watch=true"  # Watch for file changes
+      - "--entrypoints.websecure.http.tls.certificates=[myresolver.cert, myresolver.key]"
+
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.websecure.http.tls.domains[0].main=scriptsifter.com"
       - "--entrypoints.websecure.http.tls.domains[0].sans=*.scriptsifter.com"
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=porkbun"
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=60"  # Adjust accordingly if needed
-    environment:
-      - PORKBUN_API_KEY
-      - PORKBUN_SECRET_API_KEY
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - ./letsencrypt:/letsencrypt:rw
-    # network_mode: host # Required to access the host's network
     labels:
       - "traefik.enable=true"
       - traefik.http.routers.traefik.rule=Host(`traefik.scriptsifter.com`)
