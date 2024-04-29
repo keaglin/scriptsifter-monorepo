@@ -27,6 +27,8 @@ export OPENAI_API_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/OPENAI_A
 export NEXT_PUBLIC_SUPABASE_URL=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_SUPABASE_URL)
 export NEXT_PUBLIC_SUPABASE_ANON_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_SUPABASE_ANON_KEY)
 export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+export PORKBUN_API_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/PORKBUN_API_KEY)
+export PORKBUN_SECRET_API_KEY=$(op read op://$VAULT_NAME/"Scriptsifter Secrets"/PORKBUN_SECRET_API_KEY)
 
 
 # Ensure you have Docker Compose installed
