@@ -2,45 +2,36 @@ services:
   traefik:
     image: traefik:v3.0 # Adjust version if needed
     container_name: traefik # Optional, but helps with `docker ps`
-    restart: always # Recommended for production
+    restart: unless-stopped # Recommended for production
     security_opt:
       - no-new-privileges=true
     # read_only: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt:rw  # Optional, if retaining DNS challenge
-      - ./certs:/certs:ro  # Mount the directory containing the certificates
+    privileged: true
     command:
-      - "--log.level=DEBUG"  # Keep this for debugging
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-
-      # DNS Challenge Configuration (Leave as-is if you still want it)
-      - "--certificatesresolvers.letsencrypt.acme.email=dev@keaglin.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-
-      # File Provider Configuration
-      - "--certificatesResolvers.myresolver.acme.tlsChallenge=false" # Disable TLS challenge
-      - "--providers.file.directory=/certs"  # Directory where certificates are stored
-      - "--providers.file.watch=true"  # Watch for file changes
-      - "--entrypoints.websecure.http.tls.certificates=[myresolver.cert, myresolver.key]"
-
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.http.tls.domains[0].main=scriptsifter.com"
-      - "--entrypoints.websecure.http.tls.domains[0].sans=*.scriptsifter.com"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=dev@keaglin.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
-      - traefik.http.routers.traefik.rule=Host(`traefik.scriptsifter.com`)
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.service=api@internal
-      # - traefik.http.routers.traefik.middlewares=traefik-auth
-      # - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$apr1$rD4sS9vv$PJ49xLSHNY1tDFlqYpxFw.
+      - "traefik.http.routers.traefik.rule=Host(`traefik.scriptsifter.com`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=user:$$2y$$05$$6m8MvyzgJ4Kl7/3rL4X6VurX1huMas8a7oPB3xRfBjFbGCR8MUi7W"
     networks:
       - inet
 
