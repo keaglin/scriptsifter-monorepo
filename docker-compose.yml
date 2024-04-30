@@ -1,0 +1,129 @@
+services:
+  web:
+    # for testing new builds locally before pushing to Hub
+    # build: ./apps/web/Dockerfile
+    image: kevonstaycoding/scriptsifter-web:latest
+    container_name: scriptsifter-web
+    restart: always
+    environment:
+      - OPENAI_API_KEY
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - NEXT_PUBLIC_SUPABASE_URL
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+      - CLERK_SECRET_KEY
+    ports:
+      - "3000:3000" # Map your frontend's port
+    depends_on:
+      - transcribe
+      - goldmine
+      - kafka
+      - postgres
+      - minio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webapp.rule=Host(`app.scriptsifter.com`)"
+      - "traefik.http.routers.webapp.entrypoints=websecure"
+      - "traefik.http.routers.webapp.tls.certresolver=myresolver"
+    networks:
+      - services
+      - inet
+
+  transcribe:
+    # for testing new builds locally before pushing to Hub
+    # build: ./apps/transcribe/Dockerfile
+    image: kevonstaycoding/scriptsifter-transcribe:latest
+    container_name: scriptsifter-transcribe
+    restart: always
+    environment:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - OPENAI_API_KEY
+      - FLUENTFFMPEG_COV
+
+    volumes:
+      - transcribe-data:/data # Storage for downloaded files
+    depends_on:
+      - kafka
+    networks:
+      - services
+
+  goldmine:
+    # for testing new builds locally before pushing to Hub
+    # build: ./apps/goldmine/Dockerfile
+    image: kevonstaycoding/scriptsifter-goldmine:latest
+    container_name: scriptsifter-goldmine
+    restart: always
+    environment:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_JWT_SECRET
+      - OPENAI_API_KEY
+
+    depends_on:
+      - kafka
+    networks:
+      - services
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: scriptsifter-kafka
+    restart: always
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    ports:
+      - "9092:9092"
+    networks:
+      - services
+
+  minio:
+    image: minio/minio:latest
+    container_name: scriptsifter-minio
+    restart: always
+    ports:
+      - "9000:9000" # MinIO's default port
+    volumes:
+      - minio-data:/data # Persist MinIO's data
+    command: server /data
+    networks:
+      - services
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.minio-ui.rule=Host(`minio-ui.localhost`)"
+    #   - "traefik.http.routers.minio-ui.service=minio-ui"
+    #   - "traefik.http.services.minio-ui.loadbalancer.server.port=9000" # Adjust if MinIO UI port is different
+
+  postgres:
+    image: postgres:latest
+    container_name: scriptsifter-db
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Persist Postgres data
+    networks:
+      - services
+
+volumes:
+  minio-data:
+  postgres-data:
+  transcribe-data:
+
+
+networks:
+  inet:
+    external: true
+  services:
+    external: false
+    driver: bridge

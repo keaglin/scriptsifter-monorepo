@@ -2,9 +2,7 @@
   "name": "transcribe",
   "module": "index.ts",
   "devDependencies": {
-    "@flydotio/dockerfile": "latest",
     "@types/bun": "latest",
-    "@types/fluent-ffmpeg": "^2.1.24",
     "@types/jsonwebtoken": "^9.0.5"
   },
   "peerDependencies": {
@@ -12,7 +10,7 @@
   },
   "scripts": {
     "dev": "bun --watch run index.ts",
-    "build": "bun build --entrypoints ./index.ts --outdir ./out --target node"
+    "build": "bun build --entrypoints ./index.ts --outdir ./out --target bun"
   },
   "type": "module",
   "dependencies": {

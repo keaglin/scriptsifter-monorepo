@@ -3,7 +3,6 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@flydotio/dockerfile": "latest",
     "@types/bun": "latest"
   },
   "peerDependencies": {
@@ -11,7 +10,7 @@
   },
   "scripts": {
     "dev": "bun --watch run index.ts",
-    "build": "bun build --entrypoints ./index.ts --outdir ./out --target node"
+    "build": "bun build --entrypoints ./index.ts --outdir ./out --target bun"
   },
   "dependencies": {
     "kafkajs": "^2.2.4",

@@ -1,14 +1,5 @@
 # syntax = docker/dockerfile:1
-ARG NODE_VERSION=20.10.0
-FROM node:${NODE_VERSION}-slim as base
-
-# Adjust NODE_VERSION as desired
-ARG NEXT_PUBLIC_SUPABASE_URL \
-    NEXT_PUBLIC_SUPABASE_ANON_KEY \
-    SUPABASE_URL \
-    SUPABASE_ANON_KEY
-
-LABEL fly_launch_runtime="Next.js"
+FROM node:20-alpine as base
 
 # Next.js app lives here
 WORKDIR /app
@@ -18,10 +9,6 @@ ENV NODE_ENV="production"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 # Install node modules
 COPY --link package.json ./

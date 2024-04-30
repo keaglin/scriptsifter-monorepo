@@ -1,0 +1,88 @@
+name: Build and Tag Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - '../apps/web/**'  # Trigger the action only if changes are within the 'apps/web' directory
+      - '.github/workflows/web.yml'
+
+jobs:
+  dump_contexts_to_log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up env vars
+      run: |
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "branch=$(echo ${{ github.head_ref }} | tr / -)" >> $GITHUB_ENV
+        echo "app_component=web" >> $GITHUB_ENV
+        echo "formatted_date=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+        # docker build -t scriptsifter/${{ env.app_component }}:${{ env.branch }}.${{ env.sha_short }} ../apps/${{ env.app_component }}
+
+    - name: Tag Docker image
+      id: meta
+      uses: docker/metadata-action@v5
+      env:
+        app_component: ${{ env.app_component }}
+      with:
+        # list of Docker images to use as base name for tags
+        images: |
+          scriptsifter/${{ env.app_component }}
+
+        # generate Docker tags based on the following events/attributes
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,format=long,prefix=${{ env.app_component }}-${{ github.head_ref }},enable=${{ github.event_name == 'pull_request' }}
+          type=sha,format=long,prefix=${{ env.app_component }}-${{ github.ref_name }},enable=${{ github.event_name != 'pull_request' }}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push image
+      uses: docker/build-push-action@v5
+      with:
+        push: ${{ github.event != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
