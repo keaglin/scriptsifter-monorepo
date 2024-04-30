@@ -132,7 +132,7 @@ services:
       - "traefik.http.routers.minio.rule=Host(`minio-api.scriptsifter.com`)"
       - "traefik.http.routers.minio_api.entrypoints=websecure"
       - "traefik.http.routers.minio_api.tls.certresolver=myresolver"
-      - "traefik.http.routers.minio_api.service=api@minio"
+      - "traefik.http.routers.minio_api.service=minio_api"
       - "traefik.http.services.minio_api.loadbalancer.server.port=9000"
 
   postgres:
