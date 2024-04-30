@@ -129,7 +129,7 @@ services:
       - "traefik.http.routers.minio.service=minio"
       - "traefik.http.services.minio.loadbalancer.server.port=9001"
       # APi
-      # - "traefik.http.routers.minio.rule=Host(`minio.scriptsifter.com`)"
+      - "traefik.http.routers.minio.rule=Host(`minio-api.scriptsifter.com`)"
       - "traefik.http.routers.minio_api.entrypoints=websecure"
       - "traefik.http.routers.minio_api.tls.certresolver=myresolver"
       - "traefik.http.routers.minio_api.service=api@minio"
