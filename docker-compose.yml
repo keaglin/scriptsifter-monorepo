@@ -113,14 +113,15 @@ services:
       - "9001:9001" # MinIO's default port
     volumes:
       - minio-data:/data # Persist MinIO's data
-    command: server /data
+    command: server /data --console-address ":9001"
     networks:
       - services
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.minio.rule=Host(`minio-ui.scriptsifter.com`)"
+      - "traefik.http.routers.minio.rule=Host(`minio.scriptsifter.com`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
       - "traefik.http.routers.minio.tls.certresolver=myresolver"
+      - "traefik.http.services.minio.loadbalancer.server.port=9001"
 
   postgres:
     image: postgres:latest
